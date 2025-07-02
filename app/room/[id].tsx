@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Modal, TextInput, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRoomStore } from "@/stores/roomStore";
 import { Edit, Trash2, Plus, X, MapPin } from "lucide-react-native";
 import { Platform } from "react-native";
+import type { Room } from "@/stores/roomStore";
+import type { LayoutChangeEvent, GestureResponderEvent } from "react-native";
 
 export default function RoomDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { rooms, getRoom, updateRoom, deleteRoom } = useRoomStore();
-  const [room, setRoom] = useState(null);
+  const [room, setRoom] = useState<Room | null>(null);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [furnitureName, setFurnitureName] = useState("");
@@ -27,12 +29,12 @@ export default function RoomDetailScreen() {
     }
   }, [id, rooms]);
 
-  const handleImageLayout = (event) => {
+  const handleImageLayout = (event: LayoutChangeEvent) => {
     const { width, height } = event.nativeEvent.layout;
     setImageSize({ width, height });
   };
 
-  const handleImagePress = (event) => {
+  const handleImagePress = (event: GestureResponderEvent) => {
     if (!room?.imageUri || !editMode) return;
     
     // Get touch position relative to the image
@@ -42,6 +44,7 @@ export default function RoomDetailScreen() {
   };
 
   const addFurniture = () => {
+    if (!room) return;
     if (!furnitureName.trim()) {
       Alert.alert("Error", "Please enter furniture name");
       return;
@@ -64,12 +67,20 @@ export default function RoomDetailScreen() {
   };
 
   const saveRoomName = () => {
+    if (!room) return;
     if (!roomName.trim()) {
       Alert.alert("Error", "Room name cannot be empty");
       return;
     }
     
-    updateRoom(id, { ...room, name: roomName.trim() });
+    updateRoom(id, {
+      ...room,
+      name: roomName.trim(),
+      id: room.id,
+      imageUri: room.imageUri,
+      timestamp: room.timestamp,
+      furniture: room.furniture,
+    });
     setEditMode(false);
   };
 

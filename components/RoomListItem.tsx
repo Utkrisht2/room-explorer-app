@@ -1,26 +1,39 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Layers, ChevronRight } from "lucide-react-native";
+import type { Room } from "@/stores/roomStore";
 
-export const RoomListItem = ({ room, onPress }) => {
+type RoomListItemProps = {
+  room: Room;
+  onPress: () => void;
+};
+
+export const RoomListItem = ({ room, onPress }: RoomListItemProps) => {
+  let imageContent;
+  if (room.imageUri) {
+    if (Platform.OS === "web") {
+      imageContent = (
+        <View style={styles.webImageContainer}>
+          <img
+            src={room.imageUri}
+            alt={room.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
+          />
+        </View>
+      );
+    } else {
+      imageContent = <Image source={{ uri: room.imageUri }} style={styles.image} />;
+    }
+  } else {
+    imageContent = (
+      <View style={styles.placeholderContainer}>
+        <Layers size={24} color="#5271ff" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      {room.imageUri ? (
-        Platform.OS === "web" ? (
-          <View style={styles.webImageContainer}>
-            <img 
-              src={room.imageUri} 
-              alt={room.name} 
-              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
-            />
-          </View>
-        ) : (
-          <Image source={{ uri: room.imageUri }} style={styles.image} />
-        )
-      ) : (
-        <View style={styles.placeholderContainer}>
-          <Layers size={24} color="#5271ff" />
-        </View>
-      )}
+      {imageContent}
       
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{room.name}</Text>

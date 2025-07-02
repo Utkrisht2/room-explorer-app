@@ -3,19 +3,26 @@ import { useFonts } from "expo-font";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage'; 
 import { useAuthStore } from "@/stores/authStore";
 
 export const unstable_settings = {
   initialRouteName: "(auth)",
 };
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
     ...FontAwesome.font,
   });
+
+  useEffect(() => {
+    // Clear AsyncStorage once on app start
+    AsyncStorage.clear()
+      .then(() => console.log('AsyncStorage cleared on app start'))
+      .catch(err => console.log('Failed to clear AsyncStorage', err));
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -44,12 +51,10 @@ function RootLayoutNav() {
 
   useEffect(() => {
     const inAuthGroup = segments[0] === "(auth)";
-    
+
     if (!isAuthenticated && !isGuest && !inAuthGroup) {
-      // Redirect to the sign-in page if not authenticated and not in auth group
       router.replace("/(auth)/login");
     } else if ((isAuthenticated || isGuest) && inAuthGroup) {
-      // Redirect to the home page if authenticated but still in auth group
       router.replace("/(tabs)");
     }
   }, [isAuthenticated, isGuest, segments, router]);

@@ -1,26 +1,39 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Box, ChevronRight } from "lucide-react-native";
+import type { DetectedObject } from "@/stores/objectStore";
 
-export const ObjectListItem = ({ object, onPress }) => {
+type ObjectListItemProps = {
+  object: DetectedObject;
+  onPress: () => void;
+};
+
+export const ObjectListItem = ({ object, onPress }: ObjectListItemProps) => {
+  let imageContent;
+  if (object.imageUri) {
+    if (Platform.OS === "web") {
+      imageContent = (
+        <View style={styles.webImageContainer}>
+          <img 
+            src={object.imageUri} 
+            alt={object.text} 
+            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
+          />
+        </View>
+      );
+    } else {
+      imageContent = <Image source={{ uri: object.imageUri }} style={styles.image} />;
+    }
+  } else {
+    imageContent = (
+      <View style={styles.placeholderContainer}>
+        <Box size={24} color="#5271ff" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      {object.imageUri ? (
-        Platform.OS === "web" ? (
-          <View style={styles.webImageContainer}>
-            <img 
-              src={object.imageUri} 
-              alt={object.text} 
-              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
-            />
-          </View>
-        ) : (
-          <Image source={{ uri: object.imageUri }} style={styles.image} />
-        )
-      ) : (
-        <View style={styles.placeholderContainer}>
-          <Box size={24} color="#5271ff" />
-        </View>
-      )}
+      {imageContent}
       
       <View style={styles.infoContainer}>
         <Text style={styles.name}>{object.text}</Text>

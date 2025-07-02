@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Platform } from "react-native";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, ActivityIndicator, Platform, Image } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useObjectStore } from "@/stores/objectStore";
 import { MapPin, Trash2, Tag, Box, Palette, Circle, Ruler } from "lucide-react-native";
+import type { DetectedObject } from "@/stores/objectStore";
 
 export default function ObjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { objects, getObject, deleteObject } = useObjectStore();
-  const [object, setObject] = useState(null);
+  const [object, setObject] = useState<DetectedObject | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

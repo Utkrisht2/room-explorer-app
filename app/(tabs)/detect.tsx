@@ -1,11 +1,12 @@
+import React from "react";
 import { useState, useRef, useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator, Alert, Platform, Image } from "react-native";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { useRouter } from "expo-router";
 import { useObjectStore } from "@/stores/objectStore";
-import { Camera, Image, RotateCcw, Check } from "lucide-react-native";
+import { Camera, Image as ImageIcon, RotateCcw, Check } from "lucide-react-native";
 
 export default function DetectScreen() {
   const [facing, setFacing] = useState<CameraType>("back");
@@ -220,7 +221,7 @@ export default function DetectScreen() {
               style={styles.galleryButton}
               onPress={pickImage}
             >
-              <Image size={24} color="#fff" />
+              <ImageIcon size={24} color="#fff" />
             </TouchableOpacity>
             
             <TouchableOpacity 

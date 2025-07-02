@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert, Linking, Platform, ScrollView, KeyboardAvoidingView } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Linking,
+  Platform,
+  ScrollView,
+  KeyboardAvoidingView,
+  Image,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useRoomStore } from "@/stores/roomStore";
 import { Scan, ExternalLink, Image as ImageIcon, Plus } from "lucide-react-native";
@@ -12,42 +24,34 @@ export default function ScanRoomScreen() {
   const router = useRouter();
   const { addRoom } = useRoomStore();
 
+  // Open MagicPlan app or redirect to install
   const openMagicPlan = async () => {
     try {
-      // Check if MagicPlan is installed (this is a mock check)
-      const isMagicPlanInstalled = false; // In a real app, you would check this
-      
+      // This is a placeholder. In a real app, you would check installed apps.
+      const isMagicPlanInstalled = false;
       if (isMagicPlanInstalled) {
-        // Open MagicPlan with deep link
-        // In a real app, you would use Linking.openURL("magicplan://open?projectId=123&room=NewRoom")
         Alert.alert("Success", "Opening MagicPlan...");
       } else {
-        // Redirect to app store
-        const storeUrl = Platform.OS === "ios" 
-          ? "https://apps.apple.com/app/magicplan/id427424432" 
-          : "https://play.google.com/store/apps/details?id=com.sensopia.magicplan";
-        
+        const storeUrl =
+          Platform.OS === "ios"
+            ? "https://apps.apple.com/app/magicplan/id427424432"
+            : "https://play.google.com/store/apps/details?id=com.sensopia.magicplan";
         Alert.alert(
           "MagicPlan Not Installed",
-          "You need to install MagicPlan to scan rooms",
+          "You need to install MagicPlan to scan rooms.",
           [
-            {
-              text: "Cancel",
-              style: "cancel",
-            },
-            {
-              text: "Install",
-              onPress: () => Linking.openURL(storeUrl),
-            },
+            { text: "Cancel", style: "cancel" },
+            { text: "Install", onPress: () => Linking.openURL(storeUrl) },
           ]
         );
       }
     } catch (error) {
       console.error("Error opening MagicPlan:", error);
-      Alert.alert("Error", "Failed to open MagicPlan");
+      Alert.alert("Error", "Failed to open MagicPlan.");
     }
   };
 
+  // Pick image from gallery
   const pickImage = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -56,56 +60,45 @@ export default function ScanRoomScreen() {
         aspect: [4, 3],
         quality: 1,
       });
-      
       if (!result.canceled) {
         setLayoutImage(result.assets[0].uri);
       }
     } catch (error) {
       console.error("Error picking image:", error);
-      Alert.alert("Error", "Failed to pick image");
+      Alert.alert("Error", "Failed to pick image.");
     }
   };
 
+  // Save room to store
   const saveRoom = async () => {
     if (!roomName.trim()) {
-      Alert.alert("Error", "Please enter a room name");
+      Alert.alert("Error", "Please enter a room name.");
       return;
     }
-    
     setLoading(true);
-    
     try {
       const newRoom = {
         id: Date.now().toString(),
         name: roomName.trim(),
-        imageUri: layoutImage || null,
+        imageUri: layoutImage,
         timestamp: new Date().toISOString(),
         furniture: [],
       };
-      
       await addRoom(newRoom);
-      
-      Alert.alert(
-        "Success",
-        "Room added successfully",
-        [
-          {
-            text: "OK",
-            onPress: () => router.replace(`/room/${newRoom.id}`),
-          },
-        ]
-      );
+      Alert.alert("Success", "Room added successfully.", [
+        { text: "OK", onPress: () => router.replace(`/room/${newRoom.id}`) },
+      ]);
     } catch (error) {
       console.error("Error saving room:", error);
-      Alert.alert("Error", "Failed to save room");
+      Alert.alert("Error", "Failed to save room.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <KeyboardAvoidingView 
-      style={styles.container} 
+    <KeyboardAvoidingView
+      style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 64 : 0}
     >
@@ -113,10 +106,10 @@ export default function ScanRoomScreen() {
         <View style={styles.header}>
           <Text style={styles.title}>Scan Room</Text>
           <Text style={styles.subtitle}>
-            Use MagicPlan to scan your room or upload a layout image
+            Use MagicPlan to scan your room or upload a layout image.
           </Text>
         </View>
-        
+
         <View style={styles.formContainer}>
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>Room Name</Text>
@@ -127,8 +120,8 @@ export default function ScanRoomScreen() {
               onChangeText={setRoomName}
             />
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.magicPlanButton}
             onPress={openMagicPlan}
           >
@@ -136,26 +129,31 @@ export default function ScanRoomScreen() {
             <Text style={styles.magicPlanButtonText}>Open MagicPlan</Text>
             <ExternalLink size={16} color="#fff" />
           </TouchableOpacity>
-          
+
           <Text style={styles.orText}>OR</Text>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.uploadButton}
             onPress={pickImage}
           >
             <ImageIcon size={24} color="#5271ff" />
             <Text style={styles.uploadButtonText}>Upload Layout Image</Text>
           </TouchableOpacity>
-          
+
           {layoutImage && (
             <View style={styles.imagePreviewContainer}>
               <Text style={styles.imagePreviewLabel}>Selected Image:</Text>
               {Platform.OS === "web" ? (
                 <View style={styles.webImageContainer}>
-                  <img 
-                    src={layoutImage} 
-                    alt="Room Layout" 
-                    style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
+                  <img
+                    src={layoutImage}
+                    alt="Room Layout"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: 8,
+                    }}
                   />
                 </View>
               ) : (
@@ -163,9 +161,12 @@ export default function ScanRoomScreen() {
               )}
             </View>
           )}
-          
-          <TouchableOpacity 
-            style={[styles.saveButton, (!roomName.trim() || loading) && styles.disabledButton]}
+
+          <TouchableOpacity
+            style={[
+              styles.saveButton,
+              (!roomName.trim() || loading) && styles.disabledButton,
+            ]}
             onPress={saveRoom}
             disabled={!roomName.trim() || loading}
           >

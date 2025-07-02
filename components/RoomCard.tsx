@@ -1,26 +1,39 @@
-import { StyleSheet, Text, View, TouchableOpacity, Platform } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Image } from "react-native";
 import { Layers } from "lucide-react-native";
+import type { Room } from "@/stores/roomStore";
 
-export const RoomCard = ({ room, onPress }) => {
+type RoomCardProps = {
+  room: Room;
+  onPress: () => void;
+};
+
+export const RoomCard = ({ room, onPress }: RoomCardProps) => {
+  let imageContent;
+  if (room.imageUri) {
+    if (Platform.OS === "web") {
+      imageContent = (
+        <View style={styles.webImageContainer}>
+          <img
+            src={room.imageUri}
+            alt={room.name}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </View>
+      );
+    } else {
+      imageContent = <Image source={{ uri: room.imageUri }} style={styles.image} />;
+    }
+  } else {
+    imageContent = (
+      <View style={styles.placeholderContainer}>
+        <Layers size={32} color="#5271ff" />
+      </View>
+    );
+  }
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
-      {room.imageUri ? (
-        Platform.OS === "web" ? (
-          <View style={styles.webImageContainer}>
-            <img 
-              src={room.imageUri} 
-              alt={room.name} 
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          </View>
-        ) : (
-          <Image source={{ uri: room.imageUri }} style={styles.image} />
-        )
-      ) : (
-        <View style={styles.placeholderContainer}>
-          <Layers size={32} color="#5271ff" />
-        </View>
-      )}
+      {imageContent}
       
       <View style={styles.infoContainer}>
         <Text style={styles.name} numberOfLines={1}>{room.name}</Text>

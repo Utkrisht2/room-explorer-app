@@ -11,7 +11,7 @@ interface FurnitureItem {
   };
 }
 
-interface Room {
+export interface Room {
   id: string;
   name: string;
   imageUri: string | null;
