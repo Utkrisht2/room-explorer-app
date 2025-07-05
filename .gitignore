@@ -2,7 +2,7 @@
 
 # dependencies
 node_modules/
-
+RootExplorer.apks
 # Expo
 .expo/
 dist/
@@ -35,3 +35,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 .vercel
+
+# Build outputs
+*.apk
+*.apks
+*.aab
+build/
