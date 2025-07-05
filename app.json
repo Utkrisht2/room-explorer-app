@@ -15,14 +15,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.rork.roomexplorer-cross-platform-room-object-scanner"
+      "bundleIdentifier": "com.utkrisht.roomexplorer"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "app.rork.roomexplorer-cross-platform-room-object-scanner"
+      "package": "com.utkrisht.roomexplorer"
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
@@ -31,12 +31,27 @@
       [
         "expo-router",
         {
-          "origin": "https://rork.com/"
+          "origin": "https://utkrisht.com/"
         }
       ]
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": "https://utkrisht.com/"
+      },
+      "eas": {
+        "projectId": "d4fbf96a-c9b1-4ad9-82f0-4de06806d43c"
+      }
+    },
+    "owner": "utkrisht",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d4fbf96a-c9b1-4ad9-82f0-4de06806d43c"
     }
   }
 }
